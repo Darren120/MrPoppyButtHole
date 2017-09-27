@@ -42,6 +42,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Can we use pls</string>
+	<string>let us use it</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>let us use</string>
 </dict>
 </plist>

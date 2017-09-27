@@ -12,7 +12,7 @@ import UIKit
 class Photos: NSObject, NSCoding {
     var name: String
     var image: String
-    var notes: String?
+    var notes = [String]()
     
     init(name: String, image: String) {
         self.name = name
