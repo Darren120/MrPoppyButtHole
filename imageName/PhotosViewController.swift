@@ -15,8 +15,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     var tap: UITapGestureRecognizer!
     let searchController = UISearchController(searchResultsController: nil)
     @IBOutlet weak var photoCollectionCell: UICollectionView!
-    var photos = [Photos]()
-    var searchedArray = [Photos]()
+    
     var picture: Photos!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,7 +49,10 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     @objc func dismissKeyboard() {
         searchController.dismiss(animated: true, completion: nil)
         view.removeGestureRecognizer(tap)
-        view.endEditing(true)
+
+        self.view.endEditing(true)
+       
+        
     }
     
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
@@ -158,14 +160,13 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (segue.identifier == "fullPicture") {
             
             let controller: FullPictureController = segue.destination as! FullPictureController
+            let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell)! as NSIndexPath
             if searchedArray.isEmpty {
-                let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell) as! NSIndexPath
                 controller.indexPath = index.item
-                controller.photo = photos
+//                controller.photos = photos
             } else {
-                let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell) as! NSIndexPath
                 controller.indexPath = index.item
-                controller.photo = searchedArray
+//                controller.photos = searchedArray
             }
         }
         
@@ -177,10 +178,11 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     @IBAction func pickImgBtn(_ sender: Any) {
         searchedArray.removeAll(keepingCapacity: true)
         searchController.searchBar.text?.removeAll(keepingCapacity: true)
-        if view.gestureRecognizers!.contains(tap) {
+        if view.gestureRecognizers?.contains(tap) == true {
             view.removeGestureRecognizer(tap)
+            dismissKeyboard()
         }
-        // add code so if keyboard is present, removes it
+        
         searchController.searchBar.reloadInputViews()
         photoCollectionCell.reloadData()
         let picker = UIImagePickerController()

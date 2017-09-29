@@ -10,11 +10,12 @@ import UIKit
 
 class FullPictureController: UIViewController, UIScrollViewDelegate {
     var image: String!
-    var photo = [Photos]()
+//    var photos = [Photos]()
     var indexPath: Int = 0
     var isNavHidden = false
     var tap: UITapGestureRecognizer!
     var doubleTap: UITapGestureRecognizer!
+    var path: URL!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
     
@@ -22,9 +23,9 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.translatesAutoresizingMaskIntoConstraints = false
-        let path = getDocumentsDirectory().appendingPathComponent(photo[indexPath].image)
+        path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
         imageView.image = UIImage(contentsOfFile: path.path)
-        title = photo[indexPath].name
+        title = photos[indexPath].name
         
         tap = UITapGestureRecognizer(target: self, action: #selector(hideController))
         tap.numberOfTapsRequired = 1
@@ -36,8 +37,10 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 10.0
         sizeToFit()
-        
-        
+        let delete = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteImage))
+        let notes = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(addNotes))
+        let barButtonArray: [UIBarButtonItem] = [delete, notes]
+        navigationItem.rightBarButtonItems = barButtonArray
         
     }
     
@@ -46,6 +49,14 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
             navigationController?.navigationBar.isHidden = true
         }
         return imageView
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        UIView.animate(withDuration: 0.25, animations: { [unowned self] in
+            self.dismiss(animated: true, completion: nil)
+            
+        })
+        
     }
     
 
@@ -63,7 +74,9 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
   
             }
         case doubleTap:
-            scrollView.zoomScale = 1.0
+            UIView.animate(withDuration: 0.50, animations: { [unowned self] in
+                self.scrollView.zoomScale = 1.0
+            })
             scrollView.frame = view.frame
         default:
             break
@@ -79,7 +92,18 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         // Dispose of any resources that can be recreated.
     }
     
-
+    @objc func deleteImage() {
+        let fileManager = FileManager.default
+        let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! as NSURL
+        let documentsPath = documentsUrl.path
+        photos.remove(at: indexPath)
+        
+    }
+    
+    @objc func addNotes() {
+        
+    }
+    
     func sizeToFit() {
         let width = view.frame.width
         let navBarHeght = navigationController!.navigationBar.frame.height
