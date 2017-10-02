@@ -36,12 +36,19 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.navigationItem.titleView = searchController.searchBar
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+            
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.tabBarController?.tabBar.isHidden = false
         print("appear")
+        // this deletes the pic in the photos vc but it messes up since if i add a new picture the name will now not be there.. i must remove it and if i do the name will show up but the deleted pic will still be there
+        
+        if let data = defaults.object(forKey: "photos") as? Data {
+            photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+        }
+        photoCollectionCell.reloadData()
     }
     
     
@@ -159,7 +166,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "fullPicture") {
             
-            let controller: FullPictureController = segue.destination as! FullPictureController
+            let controller = segue.destination as! FullPictureController
             let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell)! as NSIndexPath
             if searchedArray.isEmpty {
                 controller.indexPath = index.item

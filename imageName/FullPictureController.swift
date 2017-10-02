@@ -10,7 +10,7 @@ import UIKit
 
 class FullPictureController: UIViewController, UIScrollViewDelegate {
     var image: String!
-//    var photos = [Photos]()
+    var photo = [Photos]()
     var indexPath: Int = 0
     var isNavHidden = false
     var tap: UITapGestureRecognizer!
@@ -52,11 +52,10 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        UIView.animate(withDuration: 0.25, animations: { [unowned self] in
-            self.dismiss(animated: true, completion: nil)
-            
-        })
-        
+        scrollView.isHidden = true
+        imageView.isHidden = true
+        self.dismiss(animated: true, completion: nil)
+  
     }
     
 
@@ -94,10 +93,38 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     
     @objc func deleteImage() {
         let fileManager = FileManager.default
-        let documentsUrl =  FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first! as NSURL
-        let documentsPath = documentsUrl.path
-        photos.remove(at: indexPath)
+            do {
+                try fileManager.removeItem(at: path)
+                } catch {
+                    print("delete failed")
+                }
         
+        if let data = defaults.object(forKey: "photos") as? Data {
+            photo = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+            photo.remove(at: indexPath)
+            
+        // CRASHES IF INDEX IS OUT OF RANGE AND I TRY TO CHECK IT BUT IT DONT WORK
+        if photo.contains(photo[indexPath - 1])  {
+            path = getDocumentsDirectory().appendingPathComponent(photos[indexPath - 1].image)
+            imageView.image = UIImage(contentsOfFile: path.path)
+            title = photos[indexPath - 1].name
+            indexPath = indexPath - 1
+            photo.remove(at: indexPath)
+            saved()
+            } else {
+                if photo.contains(photo[indexPath + 1]) {
+                path = getDocumentsDirectory().appendingPathComponent(photos[indexPath + 1].image)
+                imageView.image = UIImage(contentsOfFile: path.path)
+                title = photos[indexPath + 1].name
+                indexPath = indexPath + 1
+                photo.remove(at: indexPath)
+                saved()
+                } else {
+                dismiss(animated: true, completion: nil)
+                }
+            }
+
+        }
     }
     
     @objc func addNotes() {
@@ -111,5 +138,9 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         scrollView.frame = CGRect(x: 0 , y: 0 - navBarHeght, width: width, height: height + navBarHeght)
         imageView.frame = scrollView.frame
     }
-
+    
+    func saved() {
+        let savedData = NSKeyedArchiver.archivedData(withRootObject: photo)
+        defaults.set(savedData, forKey: "photos")
+    }
 }
