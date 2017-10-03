@@ -15,7 +15,8 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     var tap: UITapGestureRecognizer!
     let searchController = UISearchController(searchResultsController: nil)
     @IBOutlet weak var photoCollectionCell: UICollectionView!
-    
+    var photos = [Photos]()
+    var searchedArray = [Photos]()
     var picture: Photos!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,20 +37,18 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.navigationItem.titleView = searchController.searchBar
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
-            
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.tabBarController?.tabBar.isHidden = false
-        print("appear")
-        // this deletes the pic in the photos vc but it messes up since if i add a new picture the name will now not be there.. i must remove it and if i do the name will show up but the deleted pic will still be there
-        
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
         }
         photoCollectionCell.reloadData()
+        print("appear")
     }
+    
     
     
 
@@ -166,14 +165,14 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == "fullPicture") {
             
-            let controller = segue.destination as! FullPictureController
+            let controller: FullPictureController = segue.destination as! FullPictureController
             let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell)! as NSIndexPath
             if searchedArray.isEmpty {
                 controller.indexPath = index.item
-//                controller.photos = photos
+                controller.photos = photos
             } else {
                 controller.indexPath = index.item
-//                controller.photos = searchedArray
+                controller.photos = searchedArray
             }
         }
         
@@ -208,7 +207,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
             try? jpegData.write(to: imagePath)
         }
         
-        let picture = Photos(name: "", image: imageName)
+        let picture = Photos(name: "Name", image: imageName)
         picker.dismiss(animated: true)
         if picture.image == nil {
             if view == picker.view {
@@ -217,19 +216,19 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         }
         let ac = UIAlertController(title: "Picture Title", message: "Give your picture a name.", preferredStyle: .alert)
         ac.addTextField()
-        
         let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned self, ac] (action: UIAlertAction) in
             let pictureTitle = ac.textFields![0]
             picture.name = pictureTitle.text!
-            self.photoCollectionCell.reloadData()
+            self.photos.append(picture)
             self.saved()
+            self.photoCollectionCell.reloadData()
         }
         
         ac.addAction(submitAction)
         present(ac, animated: true)
-        photos.append(picture)
-        photoCollectionCell.reloadData()
         saved()
+        photoCollectionCell.reloadData()
+        
     }
 
     

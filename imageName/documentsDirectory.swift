@@ -16,5 +16,3 @@ func getDocumentsDirectory() -> URL {
     
 }
 
-var photos = [Photos]()
-var searchedArray = [Photos]()
