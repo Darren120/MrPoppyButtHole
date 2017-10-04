@@ -105,19 +105,33 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
             
         // CRASHES IF INDEX IS OUT OF RANGE AND I TRY TO CHECK IT BUT IT DONT WORK
         if photos.indices.contains(indexPath - 1)  {
-            
+            print(indexPath)
             path = getDocumentsDirectory().appendingPathComponent(photos[indexPath - 1].image)
             imageView.image = UIImage(contentsOfFile: path.path)
             title = photos[indexPath - 1].name
             photos.remove(at: indexPath)
-            self.indexPath = indexPath - 1
+            for name in photos {
+                if name.name == title {
+                    if let index = photos.index(of: name) {
+                        indexPath = index
+                    }
+                }
+            }
+            
             saved()
             } else if photos.indices.contains(indexPath + 1) {
+            print(indexPath)
                 path = getDocumentsDirectory().appendingPathComponent(photos[indexPath + 1].image)
                 imageView.image = UIImage(contentsOfFile: path.path)
                 title = photos[indexPath + 1].name
                 photos.remove(at: indexPath)
-                indexPath = indexPath + 1
+                for name in photos {
+                    if name.name == title {
+                        if let index = photos.index(of: name) {
+                            indexPath = index
+                        }
+                    }
+                }
                 saved()
         } else {
             print("in here")
