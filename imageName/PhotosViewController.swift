@@ -41,6 +41,8 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.hidesBarsOnTap = false
+        navigationController?.navigationBar.isHidden = false
         navigationController?.tabBarController?.tabBar.isHidden = false
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
@@ -53,6 +55,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     
 
     @objc func dismissKeyboard() {
+        print("dismisskeyboard")
         searchController.dismiss(animated: true, completion: nil)
         view.removeGestureRecognizer(tap)
 
@@ -166,11 +169,13 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (segue.identifier == "fullPicture") {
             
             let controller: FullPictureController = segue.destination as! FullPictureController
+            
             let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell)! as NSIndexPath
             if searchedArray.isEmpty {
                 controller.indexPath = index.item
                 controller.photos = photos
             } else {
+                
                 controller.indexPath = index.item
                 controller.photos = searchedArray
             }
@@ -192,7 +197,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         searchController.searchBar.reloadInputViews()
         photoCollectionCell.reloadData()
         let picker = UIImagePickerController()
-        picker.allowsEditing = true
+        picker.allowsEditing = false
         
         picker.delegate = self
         
@@ -200,7 +205,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        guard let image = info[UIImagePickerControllerEditedImage] as? UIImage else {return}
+        guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {return}
         let imageName = UUID().uuidString
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
         if let jpegData = UIImageJPEGRepresentation(image, 90){

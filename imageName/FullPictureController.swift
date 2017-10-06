@@ -12,28 +12,26 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     var image: String!
     var photos = [Photos]()
     var indexPath: Int = 0
-    var isNavHidden = false
-    var tap: UITapGestureRecognizer!
     var doubleTap: UITapGestureRecognizer!
     var path: URL!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
-    
+    override var prefersStatusBarHidden: Bool {
+        return true
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
+        view.translatesAutoresizingMaskIntoConstraints = true
         path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
         imageView.image = UIImage(contentsOfFile: path.path)
         title = photos[indexPath].name
-        
-        tap = UITapGestureRecognizer(target: self, action: #selector(hideController))
-        tap.numberOfTapsRequired = 1
-        view.addGestureRecognizer(tap)
         doubleTap = UITapGestureRecognizer(target: self, action: #selector(hideController))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
         scrollView.delegate = self
+        scrollView.addSubview(imageView)
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 10.0
         sizeToFit()
@@ -41,9 +39,9 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         let notes = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(addNotes))
         let barButtonArray: [UIBarButtonItem] = [delete, notes]
         navigationItem.rightBarButtonItems = barButtonArray
-        
     }
     
+   
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         if !navigationController!.navigationBar.isHidden {
             navigationController?.navigationBar.isHidden = true
@@ -55,34 +53,26 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         scrollView.isHidden = true
         imageView.isHidden = true
         self.dismiss(animated: true, completion: nil)
-  
     }
     
 
     @objc func hideController(gesture: UISwipeGestureRecognizer) {
+        print("j")
         switch gesture {
-        case tap:
-            guard scrollView.zoomScale <= 1.0 else {return}
-            if !isNavHidden {
-                navigationController?.navigationBar.isHidden = true
-                isNavHidden = true
-                
-            } else {
-                navigationController?.navigationBar.isHidden = false
-                isNavHidden = false
-  
-            }
         case doubleTap:
             UIView.animate(withDuration: 0.50, animations: { [unowned self] in
                 self.scrollView.zoomScale = 1.0
+                self.navigationController?.navigationBar.isHidden = false
+                self.sizeToFit()
+                
             })
-            scrollView.frame = view.frame
         default:
             break
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        navigationController?.hidesBarsOnTap = true
         navigationController?.tabBarController?.tabBar.isHidden = true
     }
     
@@ -92,55 +82,80 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     }
     
     @objc func deleteImage() {
-        
-        if let data = defaults.object(forKey: "photos") as? Data {
-            photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
-            let fileManager = FileManager.default
-            do {
-                try fileManager.removeItem(at: path)
-            } catch {
-                dismiss(animated: true, completion: nil)
-                print("delete failed")
-            }
-            
-        // CRASHES IF INDEX IS OUT OF RANGE AND I TRY TO CHECK IT BUT IT DONT WORK
-        if photos.indices.contains(indexPath - 1)  {
-            print(indexPath)
-            path = getDocumentsDirectory().appendingPathComponent(photos[indexPath - 1].image)
-            imageView.image = UIImage(contentsOfFile: path.path)
-            title = photos[indexPath - 1].name
-            photos.remove(at: indexPath)
-            for name in photos {
-                if name.name == title {
-                    if let index = photos.index(of: name) {
-                        indexPath = index
-                    }
+        let ac = UIAlertController(title: "Delete Picture?", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "Yes", style: .default, handler: { [unowned self]
+            (_: UIAlertAction) in
+            if let data = defaults.object(forKey: "photos") as? Data {
+                self.photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+                let fileManager = FileManager.default
+                do {
+                    try fileManager.removeItem(at: self.path)
+                } catch {
+                    self.dismiss(animated: true, completion: nil)
+                    print("delete failed")
                 }
-            }
-            
-            saved()
-            } else if photos.indices.contains(indexPath + 1) {
-            print(indexPath)
-                path = getDocumentsDirectory().appendingPathComponent(photos[indexPath + 1].image)
-                imageView.image = UIImage(contentsOfFile: path.path)
-                title = photos[indexPath + 1].name
-                photos.remove(at: indexPath)
-                for name in photos {
-                    if name.name == title {
-                        if let index = photos.index(of: name) {
-                            indexPath = index
+                if self.photos.indices.contains(self.indexPath - 1)  {
+                    print(self.indexPath)
+                    self.path = getDocumentsDirectory().appendingPathComponent(self.photos[self.indexPath - 1].image)
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            UIView.animate(withDuration: 0.22, animations: { [unowned self] in
+                                self.view.transform = CGAffineTransform.identity
+                                self.imageView.image = UIImage(contentsOfFile: self.path.path)
+                                }, completion: nil)
+                    })
+                    self.title = self.photos[self.indexPath - 1].name
+                    self.photos.remove(at: self.indexPath)
+                    for name in self.photos {
+                        if name.name == self.title {
+                            if let index = self.photos.index(of: name) {
+                                self.indexPath = index
+                            }
                         }
                     }
+                    
+                    self.saved()
+                } else if self.photos.indices.contains(self.indexPath + 1) { 
+                    self.path = getDocumentsDirectory().appendingPathComponent(self.photos[self.indexPath + 1].image)
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            UIView.animate(withDuration: 0.22, animations: { [unowned self] in
+                                self.view.transform = CGAffineTransform.identity
+                                self.imageView.image = UIImage(contentsOfFile: self.path.path)
+                                }, completion: nil)
+                    })
+                    self.title = self.photos[self.indexPath + 1].name
+                    self.photos.remove(at: self.indexPath)
+                    for name in self.photos {
+                        if name.name == self.title {
+                            if let index = self.photos.index(of: name) {
+                                self.indexPath = index
+                            }
+                        }
+                    }
+                    self.saved()
+                } else {
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            self.view.backgroundColor = UIColor.white
+                            self.photos.remove(at: self.indexPath)
+                            self.saved()
+                            self.navigationController?.popViewController(animated: true)
+                    })
                 }
-                saved()
-        } else {
-            print("in here")
-            photos.remove(at: indexPath)
-            saved()
-            navigationController?.popViewController(animated: true)
             }
-                
-        }
+        }))
+        
+        
+        ac.addAction(UIAlertAction(title: "No", style: .cancel, handler: {
+            (_: UIAlertAction)in
+            return
+        }))
+        present(ac, animated: true, completion: nil)
+
 
     }
     
@@ -151,10 +166,10 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     
     func sizeToFit() {
         let width = view.frame.width
-        let navBarHeght = navigationController!.navigationBar.frame.height
+        
         let height = view.frame.height
-        scrollView.frame = CGRect(x: 0 , y: 0 - navBarHeght, width: width, height: height + navBarHeght)
-        imageView.frame = scrollView.frame
+        scrollView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
+      
     }
     
     func saved() {
