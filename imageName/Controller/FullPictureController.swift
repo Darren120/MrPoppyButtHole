@@ -4,7 +4,7 @@
 //
 //  Created by Darren on 9/21/17.
 //  Copyright © 2017 Darren. All rights reserved.
-//
+//gay gay gay
 
 import UIKit
 
@@ -39,6 +39,8 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         scrollView.addSubview(imageView)
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 10.0
+        scrollView.backgroundColor = .white
+        
         sizeToFit()
         let delete = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteImage))
         let notes = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(addNotes))
@@ -51,6 +53,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         if !navigationController!.navigationBar.isHidden {
             navigationController?.navigationBar.isHidden = true
         }
+        
         return imageView
     }
     
@@ -66,9 +69,11 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         switch gesture {
         case doubleTap:
             UIView.animate(withDuration: 0.50, animations: { [unowned self] in
-                self.scrollView.zoomScale = 1.0
                 self.navigationController?.navigationBar.isHidden = false
-                self.sizeToFit()
+                self.scrollView.zoomScale = 1.0
+                
+                self.scrollView.frame = self.view.frame
+                
                 
             })
         default:
@@ -191,8 +196,15 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         
         let height = view.frame.height
         scrollView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
+        imageView.frame = CGRect(x: 0 , y: 0  , width: width, height: height + (navigationController?.navigationBar.frame.height)!)
+        imageView.contentMode = .scaleToFill
         
+      
+       
     }
+    
+    
+
     
     func saved() {
         let savedData = NSKeyedArchiver.archivedData(withRootObject: photos)

@@ -34,7 +34,6 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         photoCollectionCell.dataSource = self
         photoCollectionCell.delegate = self
         automaticallyAdjustsScrollViewInsets = false
@@ -49,6 +48,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         searchController.searchBar.sizeToFit()
         searchController.searchBar.becomeFirstResponder()
         self.navigationItem.titleView = searchController.searchBar
+        searchController.searchBar.placeholder = "Search for a picture"
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
         }
@@ -144,10 +144,6 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         dismissKeyboard()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -234,7 +230,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {return}
         let imageName = UUID().uuidString
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
-        if let jpegData = UIImageJPEGRepresentation(image, 90){
+        if let jpegData = UIImageJPEGRepresentation(image, 1.0){
             try? jpegData.write(to: imagePath)
         }
         
