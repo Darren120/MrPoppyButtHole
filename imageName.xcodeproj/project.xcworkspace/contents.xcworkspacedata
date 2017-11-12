@@ -1,66 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Workspace
    version = "1.0">
-   <Group
-      location = "group:../imageName"
-      name = "imageName">
-      <Group
-         location = "group:Assets 09-34-30-868.xcassets"
-         name = "Assets 09-34-30-868.xcassets">
-         <Group
-            location = "group:AppIcon.appiconset"
-            name = "AppIcon.appiconset">
-            <FileRef
-               location = "group:Contents.json">
-            </FileRef>
-         </Group>
-      </Group>
-      <Group
-         location = "group:Assets.xcassets"
-         name = "Assets.xcassets">
-         <Group
-            location = "group:AppIcon.appiconset"
-            name = "AppIcon.appiconset">
-            <FileRef
-               location = "group:Contents.json">
-            </FileRef>
-         </Group>
-      </Group>
-      <Group
-         location = "group:Base.lproj"
-         name = "Base.lproj">
-      </Group>
-   </Group>
-   <Group
-      location = "group:../imageName"
-      name = "imageName">
-      <Group
-         location = "group:Assets 09-34-30-868.xcassets"
-         name = "Assets 09-34-30-868.xcassets">
-         <Group
-            location = "group:AppIcon.appiconset"
-            name = "AppIcon.appiconset">
-            <FileRef
-               location = "group:Contents.json">
-            </FileRef>
-         </Group>
-      </Group>
-      <Group
-         location = "group:Assets.xcassets"
-         name = "Assets.xcassets">
-         <Group
-            location = "group:AppIcon.appiconset"
-            name = "AppIcon.appiconset">
-            <FileRef
-               location = "group:Contents.json">
-            </FileRef>
-         </Group>
-      </Group>
-      <Group
-         location = "group:Base.lproj"
-         name = "Base.lproj">
-      </Group>
-   </Group>
    <FileRef
       location = "self:imageName.xcodeproj">
    </FileRef>

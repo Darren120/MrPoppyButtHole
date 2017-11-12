@@ -1,0 +1,6 @@
+framework module Pods_imageName {
+  umbrella header "Pods-imageName-umbrella.h"
+
+  export *
+  module * { export * }
+}
