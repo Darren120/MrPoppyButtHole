@@ -14,6 +14,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     var isSearched = false
     var clearSearch = false
     var photos = [Photos]()
+    var searchedArray = [Photos]()
     var indexPath: Int = 0
     var doubleTap: UITapGestureRecognizer!
     var path: URL!
@@ -26,12 +27,18 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        print(isSearched)
+        if searchedArray.isEmpty {
+            path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
+            imageView.image = UIImage(contentsOfFile: path.path)
+            title = photos[indexPath].name
+        } else {
+            path = getDocumentsDirectory().appendingPathComponent(searchedArray[indexPath].image)
+            imageView.image = UIImage(contentsOfFile: path.path)
+            title = searchedArray[indexPath].name
+        }
+        
         view.isUserInteractionEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = true
-        path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
-        imageView.image = UIImage(contentsOfFile: path.path)
-        title = photos[indexPath].name
         doubleTap = UITapGestureRecognizer(target: self, action: #selector(hideController))
         doubleTap.numberOfTapsRequired = 2
         view.addGestureRecognizer(doubleTap)
@@ -53,7 +60,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         if !navigationController!.navigationBar.isHidden {
             navigationController?.navigationBar.isHidden = true
         }
-        
+        sizeToFit()
         return imageView
     }
     
@@ -111,7 +118,14 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
             
             
             if self.isSearched {
-                self.photos.remove(at: self.indexPath)
+                for photo in self.photos {
+                    if photo.image == self.searchedArray[self.indexPath].image {
+                        if let indexPosition = self.photos.index(of: photo) {
+                            self.searchedArray.remove(at: indexPosition)
+                            
+                        }
+                    }
+                }
                 self.saved()
                 self.isSearched = false
                 self.delegate?.clearSearchOnDismiss(clear: true)
@@ -196,18 +210,17 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
         
         let height = view.frame.height
         scrollView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
-        imageView.frame = CGRect(x: 0 , y: 0  , width: width, height: height + (navigationController?.navigationBar.frame.height)!)
-        imageView.contentMode = .scaleToFill
-        
-      
-       
+        imageView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
+        imageView.contentMode = .scaleAspectFit
     }
-    
-    
 
     
     func saved() {
         let savedData = NSKeyedArchiver.archivedData(withRootObject: photos)
         defaults.set(savedData, forKey: "photos")
+    }
+    func savedSearch() {
+        let savedData = NSKeyedArchiver.archivedData(withRootObject: searchedArray)
+        defaults.set(savedData, forKey: "searchPhotos")
     }
 }

@@ -24,7 +24,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     }
     
     
-    
+    let picker = UIImagePickerController()
     var tap: UITapGestureRecognizer!
     let searchController = UISearchController(searchResultsController: nil)
     @IBOutlet weak var photoCollectionCell: UICollectionView!
@@ -190,16 +190,9 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
             } else {
                 controller.delegate = self
                 controller.isSearched = true
-                var customIndex: Int = 0
-                for photo in photos {
-                    if photo.image == searchedArray[index.item].image {
-                        if let indexPosition = photos.index(of: photo) {
-                            customIndex = indexPosition
-                        }
-                    }
-                }
-                controller.indexPath = customIndex
-                controller.photos = photos
+               
+                controller.indexPath = index.item
+                controller.photos = searchedArray
             }
         }
         
@@ -207,6 +200,18 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     
     
     @IBAction func takePicBtn(_ sender: Any) {
+        searchedArray.removeAll(keepingCapacity: true)
+        searchController.searchBar.text?.removeAll(keepingCapacity: true)
+        if view.gestureRecognizers?.contains(tap) == true {
+            view.removeGestureRecognizer(tap)
+            dismissKeyboard()
+        }
+        searchController.searchBar.reloadInputViews()
+        photoCollectionCell.reloadData()
+        picker.delegate = self
+        picker.allowsEditing = false
+        picker.sourceType = .camera
+        present(picker, animated: true)
     }
     @IBAction func pickImgBtn(_ sender: Any) {
         searchedArray.removeAll(keepingCapacity: true)
@@ -218,16 +223,16 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         searchController.searchBar.reloadInputViews()
         photoCollectionCell.reloadData()
-        let picker = UIImagePickerController()
-        picker.allowsEditing = false
+        
+        picker.allowsEditing = true
         
         picker.delegate = self
-        
+        picker.sourceType = .photoLibrary
         present(picker, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {return}
+        guard let image = info[UIImagePickerControllerEditedImage] as? UIImage else {return}
         let imageName = UUID().uuidString
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
         if let jpegData = UIImageJPEGRepresentation(image, 1.0){
@@ -262,6 +267,10 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     func saved() {
         let savedData = NSKeyedArchiver.archivedData(withRootObject: photos)
         defaults.set(savedData, forKey: "photos")
+    }
+    func savedSearch() {
+        let savedData = NSKeyedArchiver.archivedData(withRootObject: searchedArray)
+        defaults.set(savedData, forKey: "searchPhotos")
     }
     
     
