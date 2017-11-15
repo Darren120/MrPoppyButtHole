@@ -11,19 +11,23 @@ import Photos
 let reuseIdentifier = "photoCell"
 let defaults = UserDefaults.standard
 protocol clearSearch {
-    func clearSearchOnDismiss(clear: Bool)
+    func updateSearchResults(returnedFromSearch: Bool)
 }
-class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, clearSearch {
-    func clearSearchOnDismiss(clear: Bool) {
-        guard clear else{return}
+class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, clearSearch{
+    
+    
+    func updateSearchResults(returnedFromSearch: Bool) {
+        guard returnedFromSearch else {return}
         print("in")
-        searchController.searchBar.text = ""
-        searchedArray.removeAll(keepingCapacity: true)
+        if let data = defaults.object(forKey: "searchPhotos") as? Data {
+            searchedArray = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+        }
+        savedSearch()
         dismissKeyboard()
         photoCollectionCell.reloadData()
     }
     
-    
+    var searchDelegate: searchArrayCheck?
     let picker = UIImagePickerController()
     var tap: UITapGestureRecognizer!
     let searchController = UISearchController(searchResultsController: nil)
@@ -75,6 +79,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (view.gestureRecognizers?.contains(tap))!{
             view.removeGestureRecognizer(tap)
         }
+        view.gestureRecognizers?.removeAll()
         
         self.view.endEditing(true)
         
@@ -85,6 +90,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         searchBar.showsCancelButton = true
         tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         view.addGestureRecognizer(tap)
+        
     }
     
     func updateSearchResults(for searchController: UISearchController){
@@ -128,6 +134,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
             photoCollectionCell.reloadData()
             view.removeGestureRecognizer(tap)
             searchBar.showsCancelButton = false
+            savedSearch()
         }
     }
     
@@ -138,6 +145,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         dismissKeyboard()
         searchBar.showsCancelButton = false
         view.removeGestureRecognizer(tap)
+        savedSearch()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -174,6 +182,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         
         saved()
+        self.savedSearch()
         
         return cell
     }
@@ -182,17 +191,16 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         if (segue.identifier == "fullPicture") {
             
             let controller: FullPictureController = segue.destination as! FullPictureController
-            
+            searchDelegate = controller
             let index: NSIndexPath = self.photoCollectionCell.indexPath(for: sender as! UICollectionViewCell)! as NSIndexPath
             if searchedArray.isEmpty {
                 controller.indexPath = index.item
-                controller.photos = photos
+                searchDelegate?.fillArray(array: photos, populate: false)
             } else {
                 controller.delegate = self
-                controller.isSearched = true
-               
+                searchDelegate?.fillArray(array: searchedArray, populate: true)
                 controller.indexPath = index.item
-                controller.photos = searchedArray
+                print(searchedArray[index.item].name)
             }
         }
         
@@ -209,7 +217,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         searchController.searchBar.reloadInputViews()
         photoCollectionCell.reloadData()
         picker.delegate = self
-        picker.allowsEditing = false
+        picker.allowsEditing = true
         picker.sourceType = .camera
         present(picker, animated: true)
     }
@@ -223,15 +231,14 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         searchController.searchBar.reloadInputViews()
         photoCollectionCell.reloadData()
-        
-        picker.allowsEditing = true
-        
         picker.delegate = self
+        picker.allowsEditing = true
         picker.sourceType = .photoLibrary
         present(picker, animated: true)
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+        print("camera")
         guard let image = info[UIImagePickerControllerEditedImage] as? UIImage else {return}
         let imageName = UUID().uuidString
         let imagePath = getDocumentsDirectory().appendingPathComponent(imageName)
@@ -241,11 +248,6 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         
         let picture = Photos(name: "Name", image: imageName)
         picker.dismiss(animated: true)
-        if picture.image == nil {
-            if view == picker.view {
-                picker.dismiss(animated: true, completion: nil)
-            }
-        }
         let ac = UIAlertController(title: "Picture Title", message: "Give your picture a name.", preferredStyle: .alert)
         ac.addTextField()
         let submitAction = UIAlertAction(title: "Submit", style: .default) { [unowned self, ac] (action: UIAlertAction) in
@@ -253,12 +255,14 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
             picture.name = pictureTitle.text!
             self.photos.append(picture)
             self.saved()
+            self.savedSearch()
             self.photoCollectionCell.reloadData()
         }
         
         ac.addAction(submitAction)
         present(ac, animated: true)
         saved()
+        savedSearch()
         photoCollectionCell.reloadData()
         
     }

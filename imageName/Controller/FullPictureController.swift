@@ -7,8 +7,19 @@
 //gay gay gay
 
 import UIKit
-
-class FullPictureController: UIViewController, UIScrollViewDelegate {
+protocol searchArrayCheck {
+    func fillArray (array: [Photos], populate: Bool)
+}
+class FullPictureController: UIViewController, UIScrollViewDelegate, searchArrayCheck {
+    func fillArray(array: [Photos], populate: Bool) {
+        if populate {
+            searchedArray = array
+            isSearched = true
+        } else {
+            photos = array
+        }
+    }
+    
     var image: String!
     var delegate: clearSearch?
     var isSearched = false
@@ -17,6 +28,8 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
     var searchedArray = [Photos]()
     var indexPath: Int = 0
     var doubleTap: UITapGestureRecognizer!
+    var swipeLeft: UISwipeGestureRecognizer!
+    var swipeRight: UISwipeGestureRecognizer!
     var path: URL!
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -78,10 +91,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
             UIView.animate(withDuration: 0.50, animations: { [unowned self] in
                 self.navigationController?.navigationBar.isHidden = false
                 self.scrollView.zoomScale = 1.0
-                
                 self.scrollView.frame = self.view.frame
-                
-                
             })
         default:
             break
@@ -118,20 +128,22 @@ class FullPictureController: UIViewController, UIScrollViewDelegate {
             
             
             if self.isSearched {
-                for photo in self.photos {
-                    if photo.image == self.searchedArray[self.indexPath].image {
-                        if let indexPosition = self.photos.index(of: photo) {
-                            self.searchedArray.remove(at: indexPosition)
-                            
+                for item in self.photos {
+                    if item.name == self.searchedArray[self.indexPath].name {
+                        if let index = self.photos.index(of: item){
+                            self.photos.remove(at: index)
+                            self.saved()
                         }
                     }
                 }
+                self.searchedArray.remove(at: self.indexPath)
+                self.savedSearch()
                 self.saved()
                 self.isSearched = false
-                self.delegate?.clearSearchOnDismiss(clear: true)
+                self.delegate?.updateSearchResults(returnedFromSearch: true)
                 self.navigationController?.popViewController(animated: true)
             } else {
-                self.delegate?.clearSearchOnDismiss(clear: false)
+                self.delegate?.updateSearchResults(returnedFromSearch: false)
                 if self.photos.indices.contains(self.indexPath - 1)  {
                     print(self.indexPath)
                     self.path = getDocumentsDirectory().appendingPathComponent(self.photos[self.indexPath - 1].image)

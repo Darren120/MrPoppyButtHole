@@ -24,6 +24,8 @@
 	<true/>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>let us use it</string>
+	<key>NSCameraUsageDescription</key>
+	<string>pls</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>let us use</string>
 	<key>UILaunchStoryboardName</key>
