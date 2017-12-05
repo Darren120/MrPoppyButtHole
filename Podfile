@@ -6,8 +6,5 @@ target 'imageName' do
   use_frameworks!
 
   # Pods for imageName
-pod 'Firebase'
-pod 'Firebase/Database'
-pod 'Firebase/Auth'
 pod 'SVProgressHUD'
 end

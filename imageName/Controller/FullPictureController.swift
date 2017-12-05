@@ -39,6 +39,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
     
     override func viewDidLoad() {
         super.viewDidLoad()
+       
         
         if searchedArray.isEmpty {
             path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
@@ -53,13 +54,19 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
         view.isUserInteractionEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = true
         doubleTap = UITapGestureRecognizer(target: self, action: #selector(hideController))
+        swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipePicture))
+        swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePicture))
+        swipeLeft.direction = .left
+        swipeRight.direction = .right
         doubleTap.numberOfTapsRequired = 2
+        view.addGestureRecognizer(swipeRight)
+        view.addGestureRecognizer(swipeLeft)
         view.addGestureRecognizer(doubleTap)
         scrollView.delegate = self
         scrollView.addSubview(imageView)
         scrollView.minimumZoomScale = 1.0
         scrollView.maximumZoomScale = 10.0
-        scrollView.backgroundColor = .white
+        scrollView.backgroundColor = .black
         
         sizeToFit()
         let delete = UIBarButtonItem(barButtonSystemItem: .trash, target: self, action: #selector(deleteImage))
@@ -82,7 +89,16 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
         imageView.isHidden = true
         self.dismiss(animated: true, completion: nil)
     }
-    
+    @objc func swipePicture (gesture: UISwipeGestureRecognizer) {
+        switch gesture {
+        case swipeLeft:
+            print("left")
+        case swipeRight:
+            print("right")
+        default:
+            break
+        }
+    }
     
     @objc func hideController(gesture: UISwipeGestureRecognizer) {
         print("j")
@@ -132,18 +148,77 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
                     if item.name == self.searchedArray[self.indexPath].name {
                         if let index = self.photos.index(of: item){
                             self.photos.remove(at: index)
+                            print("founded")
                             self.saved()
                         }
                     }
                 }
-                self.searchedArray.remove(at: self.indexPath)
-                self.savedSearch()
-                self.saved()
-                self.isSearched = false
-                self.delegate?.updateSearchResults(returnedFromSearch: true)
-                self.navigationController?.popViewController(animated: true)
+                if self.searchedArray.indices.contains(self.indexPath - 1) {
+                    self.path = getDocumentsDirectory().appendingPathComponent(self.searchedArray[self.indexPath - 1].image)
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            UIView.animate(withDuration: 0.22, animations: { [unowned self] in
+                                self.view.transform = CGAffineTransform.identity
+                                self.imageView.image = UIImage(contentsOfFile: self.path.path)
+                                }, completion: nil)
+                    })
+                    self.title = self.searchedArray[self.indexPath - 1].name
+                    self.searchedArray.remove(at: self.indexPath)
+                    self.savedSearch()
+                    for name in self.searchedArray {
+                        if name.name == self.title {
+                            if let index = self.photos.index(of: name) {
+                                self.indexPath = index
+                            }
+                        }
+                        
+                    }
+
+                    self.saved()
+                    self.savedSearch()
+                    self.delegate?.updateSearchResults(returnedFromSearch: true, clearSearch: false)
+                    
+                } else if self.searchedArray.indices.contains(self.indexPath + 1) {
+                    self.path = getDocumentsDirectory().appendingPathComponent(self.searchedArray[self.indexPath + 1].image)
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            UIView.animate(withDuration: 0.22, animations: { [unowned self] in
+                                self.view.transform = CGAffineTransform.identity
+                                self.imageView.image = UIImage(contentsOfFile: self.path.path)
+                                }, completion: nil)
+                    })
+                    self.title = self.searchedArray[self.indexPath + 1].name
+                    self.searchedArray.remove(at: self.indexPath)
+                    self.savedSearch()
+                    for name in self.searchedArray {
+                        if name.name == self.title {
+                            if let index = self.photos.index(of: name) {
+                                self.indexPath = index
+                            }
+                        }
+                        
+                    }
+                    self.saved()
+                    self.savedSearch()
+                    self.delegate?.updateSearchResults(returnedFromSearch: true, clearSearch: false)
+                    
+                    
+                } else {
+                    UIView.animate(withDuration: 0.23, animations: { [unowned self] in
+                        self.view.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
+                        }, completion: {[unowned self] (_: Bool) in
+                            self.view.backgroundColor = UIColor.white
+                            self.searchedArray.remove(at: self.indexPath)
+                            self.savedSearch()
+                            self.delegate?.updateSearchResults(returnedFromSearch: true, clearSearch: true)
+                            self.navigationController?.popViewController(animated: true)
+                            
+                    })
+                }
             } else {
-                self.delegate?.updateSearchResults(returnedFromSearch: false)
+                self.delegate?.updateSearchResults(returnedFromSearch: false, clearSearch: false)
                 if self.photos.indices.contains(self.indexPath - 1)  {
                     print(self.indexPath)
                     self.path = getDocumentsDirectory().appendingPathComponent(self.photos[self.indexPath - 1].image)

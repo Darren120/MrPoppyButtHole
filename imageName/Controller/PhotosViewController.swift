@@ -11,17 +11,27 @@ import Photos
 let reuseIdentifier = "photoCell"
 let defaults = UserDefaults.standard
 protocol clearSearch {
-    func updateSearchResults(returnedFromSearch: Bool)
+    func updateSearchResults(returnedFromSearch: Bool, clearSearch: Bool)
 }
 class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating, clearSearch{
     
     
-    func updateSearchResults(returnedFromSearch: Bool) {
-        guard returnedFromSearch else {return}
-        print("in")
-        if let data = defaults.object(forKey: "searchPhotos") as? Data {
-            searchedArray = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+    func updateSearchResults(returnedFromSearch: Bool, clearSearch: Bool) {
+        if clearSearch {
+            searchController.searchBar.text = ""
+            searchController.dismiss(animated: true, completion: nil)
         }
+        if returnedFromSearch {
+            print("in")
+            if let data = defaults.object(forKey: "searchPhotos") as? Data {
+                searchedArray = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+            }
+            if let data = defaults.object(forKey: "photos") as? Data {
+                photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
+            }
+        }
+        
+        saved()
         savedSearch()
         dismissKeyboard()
         photoCollectionCell.reloadData()
@@ -35,9 +45,19 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
     var photos = [Photos]()
     var searchedArray = [Photos]()
     var picture: Photos!
-    
+    var label = UILabel()
+    var noSearchResult = false
+    var emptyArray = [Photos]()
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        label.layer.zPosition = 1
+        label.text = "No search results found"
+        print(view.frame.height)
+        label.frame = CGRect(x: 0, y: 0, width: 500, height: view.frame.height - 500 )
+        label.adjustsFontSizeToFitWidth = true
+        view.addSubview(label)
+        label.isHidden = true
         photoCollectionCell.dataSource = self
         photoCollectionCell.delegate = self
         automaticallyAdjustsScrollViewInsets = false
@@ -56,6 +76,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         if let data = defaults.object(forKey: "photos") as? Data {
             photos = NSKeyedUnarchiver.unarchiveObject(with: data) as? [Photos] ?? [Photos]()
         }
+       
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -99,6 +120,10 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
             view.addGestureRecognizer(tap)
         }
         
+        if (searchController.searchBar.text?.isEmpty)! {
+            noSearchResult = false 
+        }
+        
         if(!(searchController.searchBar.text?.isEmpty)!){
             
             if !(view.gestureRecognizers?.contains(tap))! {
@@ -110,7 +135,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
                     return "\(searchController.searchBar.text!)"
                 }
                 if pictures.name.contains(searchResult().lowercased()) {
-                    
+                    noSearchResult = false
                     if searchedArray.contains(pictures) {
                         dismissKeyboard()
                         return
@@ -119,6 +144,8 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
                         searchController.searchBar.showsCancelButton = false
                         photoCollectionCell.reloadData()
                     }
+                } else {
+                    noSearchResult = true
                 }
             }
         }
@@ -161,11 +188,19 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         } else {
             return searchedArray.count
         }
+       
         
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! photoCell
+        if noSearchResult {
+            cell.isHidden = true
+            label.isHidden = false
+        } else {
+            cell.isHidden = false
+            label.isHidden = true 
+        }
         if searchedArray.isEmpty {
             picture = photos[indexPath.item]
             
@@ -185,6 +220,7 @@ class PhotosViewController: UIViewController, UICollectionViewDelegate, UICollec
         self.savedSearch()
         
         return cell
+       
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

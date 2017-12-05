@@ -17,6 +17,8 @@
 		C4CEE8CF1F74245E000CCE1B /* Photos.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CEE8CE1F74245E000CCE1B /* Photos.swift */; };
 		C4CEE8D11F7470F0000CCE1B /* FullPictureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CEE8D01F7470F0000CCE1B /* FullPictureController.swift */; };
 		C4D0E5C11F79468F0083F3E0 /* documentsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D0E5C01F79468F0083F3E0 /* documentsDirectory.swift */; };
+		C4D450671FC4771F007EEC60 /* albumsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D450661FC4771F007EEC60 /* albumsCell.swift */; };
+		C4D450691FC47757007EEC60 /* Albums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D450681FC47757007EEC60 /* Albums.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +35,8 @@
 		C4CEE8D01F7470F0000CCE1B /* FullPictureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullPictureController.swift; sourceTree = "<group>"; };
 		C4D0E5C01F79468F0083F3E0 /* documentsDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = documentsDirectory.swift; sourceTree = "<group>"; };
 		C4D0E5ED1F7A79BF0083F3E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C4D450661FC4771F007EEC60 /* albumsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = albumsCell.swift; sourceTree = "<group>"; };
+		C4D450681FC47757007EEC60 /* Albums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Albums.swift; sourceTree = "<group>"; };
 		C8CEC18D48EE12838B064BEC /* Pods_imageName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_imageName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB4A5148594F1B2A249171A4 /* Pods-imageName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imageName.debug.xcconfig"; path = "Pods/Target Support Files/Pods-imageName/Pods-imageName.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -70,6 +74,7 @@
 			isa = PBXGroup;
 			children = (
 				C4CEE8CE1F74245E000CCE1B /* Photos.swift */,
+				C4D450681FC47757007EEC60 /* Albums.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -98,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				C4CEE8CC1F741A27000CCE1B /* photoCell.swift */,
+				C4D450661FC4771F007EEC60 /* albumsCell.swift */,
 			);
 			path = Cell;
 			sourceTree = "<group>";
@@ -211,19 +217,11 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-imageName/Pods-imageName-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/SVProgressHUD/SVProgressHUD.framework",
-				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
-				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SVProgressHUD.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -276,7 +274,9 @@
 				C4CEE8CB1F740423000CCE1B /* PhotosViewController.swift in Sources */,
 				C4CEE8D11F7470F0000CCE1B /* FullPictureController.swift in Sources */,
 				C4CEE8BB1F73FAC2000CCE1B /* AlbumsViewController.swift in Sources */,
+				C4D450691FC47757007EEC60 /* Albums.swift in Sources */,
 				C4CEE8B91F73FAC2000CCE1B /* AppDelegate.swift in Sources */,
+				C4D450671FC4771F007EEC60 /* albumsCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
