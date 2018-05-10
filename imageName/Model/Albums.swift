@@ -15,12 +15,14 @@ class Albums: NSObject, NSCoding {
     var secondPicture: String = ""
     var thirdPicture: String = ""
     var name: String
+    var uniqueID: String
     
-    init(albumName: String) {
+    init(albumName: String, uniqueID: String) {
 //        firstPicture = firstPic
 //        secondPicture = secondPic
 //        thirdPicture = thirdPic
         self.name = albumName
+        self.uniqueID = uniqueID
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -29,6 +31,7 @@ class Albums: NSObject, NSCoding {
         secondPicture = aDecoder.decodeObject(forKey: "secondPicture") as! String
         thirdPicture = aDecoder.decodeObject(forKey: "thirdPicture") as! String
         name = aDecoder.decodeObject(forKey: "name") as! String
+        uniqueID = aDecoder.decodeObject(forKey: "uniqueID") as! String
         
     }
     
@@ -38,5 +41,6 @@ class Albums: NSObject, NSCoding {
         aCoder.encode(secondPicture, forKey: "secondPicture")
         aCoder.encode(thirdPicture, forKey: "thirdPicture")
         aCoder.encode(name, forKey: "name")
+        aCoder.encode(uniqueID, forKey: "uniqueID")
     }
 }

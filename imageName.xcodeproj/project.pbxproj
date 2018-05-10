@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		094ECECD0516AAA954F42758 /* Pods_imageName.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C8CEC18D48EE12838B064BEC /* Pods_imageName.framework */; };
+		C4A3DCDC2045C08E00B1542D /* Inceptionv3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = C4A3DCDB2045C08E00B1542D /* Inceptionv3.mlmodel */; };
+		C4C6363A1FD8432E00C67299 /* AlbumsPhotosController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C636391FD8432E00C67299 /* AlbumsPhotosController.swift */; };
+		C4C6363C1FDF79C900C67299 /* albumsPhotosCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C6363B1FDF79C900C67299 /* albumsPhotosCell.swift */; };
 		C4CEE8B91F73FAC2000CCE1B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CEE8B81F73FAC2000CCE1B /* AppDelegate.swift */; };
 		C4CEE8BB1F73FAC2000CCE1B /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4CEE8BA1F73FAC2000CCE1B /* AlbumsViewController.swift */; };
 		C4CEE8BE1F73FAC2000CCE1B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C4CEE8BC1F73FAC2000CCE1B /* Main.storyboard */; };
@@ -19,10 +22,14 @@
 		C4D0E5C11F79468F0083F3E0 /* documentsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D0E5C01F79468F0083F3E0 /* documentsDirectory.swift */; };
 		C4D450671FC4771F007EEC60 /* albumsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D450661FC4771F007EEC60 /* albumsCell.swift */; };
 		C4D450691FC47757007EEC60 /* Albums.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4D450681FC47757007EEC60 /* Albums.swift */; };
+		C4F419431FE9DDFC00422338 /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4F419421FE9DDFC00422338 /* Protocols.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		776BDAAF601BC6B16C36EC4D /* Pods-imageName.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imageName.release.xcconfig"; path = "Pods/Target Support Files/Pods-imageName/Pods-imageName.release.xcconfig"; sourceTree = "<group>"; };
+		C4A3DCDB2045C08E00B1542D /* Inceptionv3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = Inceptionv3.mlmodel; sourceTree = "<group>"; };
+		C4C636391FD8432E00C67299 /* AlbumsPhotosController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsPhotosController.swift; sourceTree = "<group>"; };
+		C4C6363B1FDF79C900C67299 /* albumsPhotosCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = albumsPhotosCell.swift; sourceTree = "<group>"; };
 		C4CEE8B51F73FAC2000CCE1B /* imageName.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageName.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4CEE8B81F73FAC2000CCE1B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C4CEE8BA1F73FAC2000CCE1B /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
@@ -37,6 +44,7 @@
 		C4D0E5ED1F7A79BF0083F3E0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C4D450661FC4771F007EEC60 /* albumsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = albumsCell.swift; sourceTree = "<group>"; };
 		C4D450681FC47757007EEC60 /* Albums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Albums.swift; sourceTree = "<group>"; };
+		C4F419421FE9DDFC00422338 /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		C8CEC18D48EE12838B064BEC /* Pods_imageName.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_imageName.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB4A5148594F1B2A249171A4 /* Pods-imageName.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imageName.debug.xcconfig"; path = "Pods/Target Support Files/Pods-imageName/Pods-imageName.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,6 +101,7 @@
 			children = (
 				C4CEE8B81F73FAC2000CCE1B /* AppDelegate.swift */,
 				C4CEE8BA1F73FAC2000CCE1B /* AlbumsViewController.swift */,
+				C4C636391FD8432E00C67299 /* AlbumsPhotosController.swift */,
 				C4CEE8CA1F740423000CCE1B /* PhotosViewController.swift */,
 				C4CEE8D01F7470F0000CCE1B /* FullPictureController.swift */,
 			);
@@ -104,13 +113,25 @@
 			children = (
 				C4CEE8CC1F741A27000CCE1B /* photoCell.swift */,
 				C4D450661FC4771F007EEC60 /* albumsCell.swift */,
+				C4C6363B1FDF79C900C67299 /* albumsPhotosCell.swift */,
 			);
 			path = Cell;
+			sourceTree = "<group>";
+		};
+		C4A3DCDA2045C06200B1542D /* Extras */ = {
+			isa = PBXGroup;
+			children = (
+				C4F419421FE9DDFC00422338 /* Protocols.swift */,
+				C4D0E5C01F79468F0083F3E0 /* documentsDirectory.swift */,
+				C4A3DCDB2045C08E00B1542D /* Inceptionv3.mlmodel */,
+			);
+			path = Extras;
 			sourceTree = "<group>";
 		};
 		C4CEE8AC1F73FAC2000CCE1B = {
 			isa = PBXGroup;
 			children = (
+				C4A3DCDA2045C06200B1542D /* Extras */,
 				C4CEE8B71F73FAC2000CCE1B /* imageName */,
 				C4CEE8B61F73FAC2000CCE1B /* Products */,
 				2E678D93E247C250CF07FF5F /* Pods */,
@@ -133,7 +154,6 @@
 				C4613E7F1FB4B3D500C2CB9A /* Model */,
 				C4613E821FB4B4F800C2CB9A /* Cell */,
 				C4613E801FB4B3D900C2CB9A /* View */,
-				C4D0E5C01F79468F0083F3E0 /* documentsDirectory.swift */,
 				C4D0E5ED1F7A79BF0083F3E0 /* Assets.xcassets */,
 				C4CEE8C41F73FAC2000CCE1B /* Info.plist */,
 			);
@@ -270,13 +290,17 @@
 			files = (
 				C4CEE8CF1F74245E000CCE1B /* Photos.swift in Sources */,
 				C4CEE8CD1F741A27000CCE1B /* photoCell.swift in Sources */,
+				C4A3DCDC2045C08E00B1542D /* Inceptionv3.mlmodel in Sources */,
 				C4D0E5C11F79468F0083F3E0 /* documentsDirectory.swift in Sources */,
+				C4F419431FE9DDFC00422338 /* Protocols.swift in Sources */,
 				C4CEE8CB1F740423000CCE1B /* PhotosViewController.swift in Sources */,
 				C4CEE8D11F7470F0000CCE1B /* FullPictureController.swift in Sources */,
 				C4CEE8BB1F73FAC2000CCE1B /* AlbumsViewController.swift in Sources */,
+				C4C6363C1FDF79C900C67299 /* albumsPhotosCell.swift in Sources */,
 				C4D450691FC47757007EEC60 /* Albums.swift in Sources */,
 				C4CEE8B91F73FAC2000CCE1B /* AppDelegate.swift in Sources */,
 				C4D450671FC4771F007EEC60 /* albumsCell.swift in Sources */,
+				C4C6363A1FD8432E00C67299 /* AlbumsPhotosController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -417,7 +441,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LS23PB89N4;
 				INFOPLIST_FILE = imageName/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.darren.imageName;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -434,7 +458,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = LS23PB89N4;
 				INFOPLIST_FILE = imageName/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.darren.imageName;
 				PRODUCT_NAME = "$(TARGET_NAME)";

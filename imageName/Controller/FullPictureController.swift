@@ -7,11 +7,10 @@
 //gay gay gay
 
 import UIKit
-protocol searchArrayCheck {
-    func fillArray (array: [Photos], populate: Bool)
-}
+
 class FullPictureController: UIViewController, UIScrollViewDelegate, searchArrayCheck {
     func fillArray(array: [Photos], populate: Bool) {
+        print("g")
         if populate {
             searchedArray = array
             isSearched = true
@@ -20,6 +19,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
         }
     }
     
+    var int = 0
     var image: String!
     var delegate: clearSearch?
     var isSearched = false
@@ -39,8 +39,8 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
     
     override func viewDidLoad() {
         super.viewDidLoad()
-       
-        
+       scrollView.isScrollEnabled = true
+        print("ok:\(indexPath)")
         if searchedArray.isEmpty {
             path = getDocumentsDirectory().appendingPathComponent(photos[indexPath].image)
             imageView.image = UIImage(contentsOfFile: path.path)
@@ -52,7 +52,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
         }
         
         view.isUserInteractionEnabled = true
-        view.translatesAutoresizingMaskIntoConstraints = true
+        view.translatesAutoresizingMaskIntoConstraints = false
         doubleTap = UITapGestureRecognizer(target: self, action: #selector(hideController))
         swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipePicture))
         swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePicture))
@@ -77,12 +77,19 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
     
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-        if !navigationController!.navigationBar.isHidden {
-            navigationController?.navigationBar.isHidden = true
-        }
-        sizeToFit()
         return imageView
     }
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        navigationController?.navigationBar.isHidden = true
+        if scrollView.zoomScale == 1 {
+            navigationController?.navigationBar.isHidden = false
+            sizeToFit()
+        } else {
+            navigationController?.navigationBar.isHidden = true
+
+        }
+    }
+    
     
     override func viewWillDisappear(_ animated: Bool) {
         scrollView.isHidden = true
@@ -108,6 +115,7 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
                 self.navigationController?.navigationBar.isHidden = false
                 self.scrollView.zoomScale = 1.0
                 self.scrollView.frame = self.view.frame
+                self.sizeToFit()
             })
         default:
             break
@@ -298,16 +306,22 @@ class FullPictureController: UIViewController, UIScrollViewDelegate, searchArray
         let height = view.frame.height
         scrollView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
         imageView.frame = CGRect(x: 0 , y: 0  , width: width, height: height)
-        imageView.contentMode = .scaleAspectFit
+        
+       
     }
 
     
     func saved() {
+        if int == 0 {
         let savedData = NSKeyedArchiver.archivedData(withRootObject: photos)
         defaults.set(savedData, forKey: "photos")
+        }
     }
     func savedSearch() {
+        if int == 0{
         let savedData = NSKeyedArchiver.archivedData(withRootObject: searchedArray)
         defaults.set(savedData, forKey: "searchPhotos")
+        }
     }
+        
 }
